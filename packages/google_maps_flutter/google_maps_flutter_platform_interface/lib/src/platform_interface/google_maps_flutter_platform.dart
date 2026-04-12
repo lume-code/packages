@@ -374,7 +374,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('onPolylineTap() has not been implemented.');
   }
 
-  /// A [Polyline] path has been edited by the user.
+  /// A [Polyline] path has been edited by the user. Currently only supported on web.
   Stream<PolylineEditEvent> onPolylineEdited({required int mapId}) {
     throw UnimplementedError('onPolylineEdited() has not been implemented.');
   }
@@ -384,7 +384,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('onPolygonTap() has not been implemented.');
   }
 
-  /// A [Polygon] path has been edited by the user.
+  /// A [Polygon] path has been edited by the user. Currently only supported on web.
   Stream<PolygonEditEvent> onPolygonEdited({required int mapId}) {
     throw UnimplementedError('onPolygonEdited() has not been implemented.');
   }

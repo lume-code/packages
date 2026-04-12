@@ -1,3 +1,9 @@
+## 2.16.0
+
+* Adds `editable` property and `onEdited` callback to `Polyline` and `Polygon`.
+* Adds `PolylineEditEvent` and `PolygonEditEvent` event types.
+* Adds `onPolylineEdited` and `onPolygonEdited` streams to platform interface.
+
 ## 2.15.0
 
 * Adds support for `colorScheme` for cloud-based maps styling brightness in web.

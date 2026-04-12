@@ -1,3 +1,7 @@
+## 2.18.0
+
+* Adds support for editable polylines and polygons on web.
+
 ## 2.17.0
 
 * Adds missing re-exports of classes related to advanced markers.

@@ -1,3 +1,8 @@
+## 0.7.0
+
+* Adds support for editable polylines and polygons via the native Google Maps JavaScript API `editable` feature.
+* Listens to MVCArray path change events to emit `PolylineEditEvent` and `PolygonEditEvent`.
+
 ## 0.6.2+1
 
 * Fixes a bug that prevented non-cloud styles from being applied.

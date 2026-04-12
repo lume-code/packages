@@ -58,10 +58,12 @@ class PolylineController {
     }
 
     _subscriptions.add(polyline.path.onSetAt.listen((_) => emitCurrentPath()));
-    _subscriptions
-        .add(polyline.path.onInsertAt.listen((_) => emitCurrentPath()));
-    _subscriptions
-        .add(polyline.path.onRemoveAt.listen((_) => emitCurrentPath()));
+    _subscriptions.add(
+      polyline.path.onInsertAt.listen((_) => emitCurrentPath()),
+    );
+    _subscriptions.add(
+      polyline.path.onRemoveAt.listen((_) => emitCurrentPath()),
+    );
   }
 
   /// Updates the options of the wrapped [gmaps.Polyline] object.

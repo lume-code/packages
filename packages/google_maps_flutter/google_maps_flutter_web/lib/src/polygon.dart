@@ -58,10 +58,12 @@ class PolygonController {
     }
 
     _subscriptions.add(polygon.path.onSetAt.listen((_) => emitCurrentPath()));
-    _subscriptions
-        .add(polygon.path.onInsertAt.listen((_) => emitCurrentPath()));
-    _subscriptions
-        .add(polygon.path.onRemoveAt.listen((_) => emitCurrentPath()));
+    _subscriptions.add(
+      polygon.path.onInsertAt.listen((_) => emitCurrentPath()),
+    );
+    _subscriptions.add(
+      polygon.path.onRemoveAt.listen((_) => emitCurrentPath()),
+    );
   }
 
   /// Updates the options of the wrapped [gmaps.Polygon] object.

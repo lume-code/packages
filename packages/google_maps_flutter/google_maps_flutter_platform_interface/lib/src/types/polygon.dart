@@ -98,13 +98,13 @@ class Polygon implements MapsObject<Polygon> {
   /// True if the user can edit this polygon by dragging its vertices.
   ///
   /// When true, the polygon renders with draggable vertex handles.
-  /// Not supported on all platforms.
+  /// Currently only supported on web.
   final bool editable;
 
   /// Called when the user edits the polygon path by dragging vertices.
   ///
   /// The callback receives the updated list of [LatLng] points.
-  /// Only fires when [editable] is true.
+  /// Only fires when [editable] is true. Currently only supported on web.
   final void Function(List<LatLng> points)? onEdited;
 
   /// Creates a new [Polygon] object whose values are the same as this instance,

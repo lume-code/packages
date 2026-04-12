@@ -120,13 +120,13 @@ class Polyline implements MapsObject<Polyline> {
   /// True if the user can edit this polyline by dragging its vertices.
   ///
   /// When true, the polyline renders with draggable vertex handles.
-  /// Not supported on all platforms.
+  /// Currently only supported on web.
   final bool editable;
 
   /// Called when the user edits the polyline path by dragging vertices.
   ///
   /// The callback receives the updated list of [LatLng] points.
-  /// Only fires when [editable] is true.
+  /// Only fires when [editable] is true. Currently only supported on web.
   final void Function(List<LatLng> points)? onEdited;
 
   /// Creates a new [Polyline] object whose values are the same as this instance,
