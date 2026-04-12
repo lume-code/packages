@@ -161,11 +161,15 @@ class PolygonEditEvent extends MapEvent<PolygonId> {
   /// Build a PolygonEdit Event triggered from the map represented by `mapId`.
   ///
   /// The `value` of this event is a [PolygonId] object that represents the edited Polygon.
-  /// [points] contains the updated path after the edit.
-  PolygonEditEvent(super.mapId, super.polygonId, this.points);
+  /// [points] contains the updated outer boundary after the edit.
+  /// [holes] contains the updated holes after the edit.
+  PolygonEditEvent(super.mapId, super.polygonId, this.points, this.holes);
 
-  /// The updated list of points after the edit.
+  /// The updated outer boundary points after the edit.
   final List<LatLng> points;
+
+  /// The updated list of holes after the edit.
+  final List<List<LatLng>> holes;
 }
 
 /// An event fired when a [Circle] is tapped.

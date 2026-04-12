@@ -671,12 +671,16 @@ class _GoogleMapState extends State<GoogleMap> {
     }
   }
 
-  void onPolygonEdited(PolygonId polygonId, List<LatLng> points) {
+  void onPolygonEdited(
+    PolygonId polygonId,
+    List<LatLng> points,
+    List<List<LatLng>> holes,
+  ) {
     final Polygon? polygon = _polygons[polygonId];
     if (polygon == null) {
       throw UnknownMapObjectIdError('polygon', polygonId, 'onEdited');
     }
-    polygon.onEdited?.call(points);
+    polygon.onEdited?.call(points, holes);
   }
 
   void onPolylineTap(PolylineId polylineId) {

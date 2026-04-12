@@ -11,7 +11,8 @@ class PolygonController {
     required gmaps.Polygon polygon,
     bool consumeTapEvents = false,
     VoidCallback? onTap,
-    void Function(List<gmaps.LatLng> path)? onEdited,
+    void Function(List<gmaps.LatLng> points, List<List<gmaps.LatLng>> holes)?
+    onEdited,
   }) : _polygon = polygon,
        _consumeTapEvents = consumeTapEvents {
     if (onTap != null) {
@@ -40,30 +41,40 @@ class PolygonController {
   /// Returns `true` if this Controller will use its own `onTap` handler to consume events.
   bool get consumeTapEvents => _consumeTapEvents;
 
-  List<gmaps.LatLng> _readPath(gmaps.Polygon polygon) {
-    final gmaps.MVCArray<gmaps.LatLng> path = polygon.path;
+  List<gmaps.LatLng> _readMvcPath(gmaps.MVCArray<gmaps.LatLng> mvcPath) {
     final points = <gmaps.LatLng>[];
-    for (int i = 0; i < path.length.toInt(); i++) {
-      points.add(path.getAt(i));
+    for (int i = 0; i < mvcPath.length.toInt(); i++) {
+      points.add(mvcPath.getAt(i));
     }
     return points;
   }
 
   void _listenToPathEdits(
     gmaps.Polygon polygon,
-    void Function(List<gmaps.LatLng> path) onEdited,
+    void Function(List<gmaps.LatLng> points, List<List<gmaps.LatLng>> holes)
+    onEdited,
   ) {
-    void emitCurrentPath() {
-      onEdited(_readPath(polygon));
+    void emitCurrentPaths() {
+      final gmaps.MVCArray<gmaps.MVCArray<gmaps.LatLng>> allPaths =
+          polygon.paths;
+      final List<gmaps.LatLng> outerPath = allPaths.length.toInt() > 0
+          ? _readMvcPath(allPaths.getAt(0))
+          : <gmaps.LatLng>[];
+      final List<List<gmaps.LatLng>> holes = <List<gmaps.LatLng>>[];
+      for (int i = 1; i < allPaths.length.toInt(); i++) {
+        holes.add(_readMvcPath(allPaths.getAt(i)));
+      }
+      onEdited(outerPath, holes);
     }
 
-    _subscriptions.add(polygon.path.onSetAt.listen((_) => emitCurrentPath()));
-    _subscriptions.add(
-      polygon.path.onInsertAt.listen((_) => emitCurrentPath()),
-    );
-    _subscriptions.add(
-      polygon.path.onRemoveAt.listen((_) => emitCurrentPath()),
-    );
+    // Listen on all paths (outer boundary + holes).
+    final gmaps.MVCArray<gmaps.MVCArray<gmaps.LatLng>> allPaths = polygon.paths;
+    for (int i = 0; i < allPaths.length.toInt(); i++) {
+      final gmaps.MVCArray<gmaps.LatLng> path = allPaths.getAt(i);
+      _subscriptions.add(path.onSetAt.listen((_) => emitCurrentPaths()));
+      _subscriptions.add(path.onInsertAt.listen((_) => emitCurrentPaths()));
+      _subscriptions.add(path.onRemoveAt.listen((_) => emitCurrentPaths()));
+    }
   }
 
   /// Updates the options of the wrapped [gmaps.Polygon] object.

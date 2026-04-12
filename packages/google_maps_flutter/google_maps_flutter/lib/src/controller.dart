@@ -124,7 +124,7 @@ class GoogleMapController {
           .onPolygonEdited(mapId: mapId)
           .listen(
             (PolygonEditEvent e) =>
-                _googleMapState.onPolygonEdited(e.value, e.points),
+                _googleMapState.onPolygonEdited(e.value, e.points, e.holes),
           ),
     );
     _streamSubscriptions.add(

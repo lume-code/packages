@@ -103,9 +103,10 @@ class Polygon implements MapsObject<Polygon> {
 
   /// Called when the user edits the polygon path by dragging vertices.
   ///
-  /// The callback receives the updated list of [LatLng] points.
-  /// Only fires when [editable] is true. Currently only supported on web.
-  final void Function(List<LatLng> points)? onEdited;
+  /// The callback receives the updated outer boundary [points] and the
+  /// updated list of [holes]. Only fires when [editable] is true.
+  /// Currently only supported on web.
+  final void Function(List<LatLng> points, List<List<LatLng>> holes)? onEdited;
 
   /// Creates a new [Polygon] object whose values are the same as this instance,
   /// unless overwritten by the specified parameters.
@@ -121,7 +122,7 @@ class Polygon implements MapsObject<Polygon> {
     int? zIndexParam,
     VoidCallback? onTapParam,
     bool? editableParam,
-    void Function(List<LatLng> points)? onEditedParam,
+    void Function(List<LatLng> points, List<List<LatLng>> holes)? onEditedParam,
   }) {
     return Polygon(
       polygonId: polygonId,

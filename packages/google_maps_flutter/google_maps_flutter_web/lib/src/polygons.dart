@@ -41,8 +41,8 @@ class PolygonsController extends GeometryController {
         _onPolygonTap(polygon.polygonId);
       },
       onEdited: polygon.editable
-          ? (List<gmaps.LatLng> path) {
-              _onPolygonEdited(polygon.polygonId, path);
+          ? (List<gmaps.LatLng> path, List<List<gmaps.LatLng>> holes) {
+              _onPolygonEdited(polygon.polygonId, path, holes);
             }
           : null,
     );
@@ -55,9 +55,10 @@ class PolygonsController extends GeometryController {
   }
 
   void _changePolygon(Polygon polygon) {
-    final PolygonController? polygonController =
-        _polygonIdToController[polygon.polygonId];
-    polygonController?.update(_polygonOptionsFromPolygon(googleMap, polygon));
+    // Remove and recreate the controller to ensure edit listeners are
+    // properly set up when the editable property changes.
+    _removePolygon(polygon.polygonId);
+    _addPolygon(polygon);
   }
 
   /// Removes a set of [PolygonId]s from the cache.
@@ -81,10 +82,25 @@ class PolygonsController extends GeometryController {
     return _polygonIdToController[polygonId]?.consumeTapEvents ?? false;
   }
 
-  void _onPolygonEdited(PolygonId polygonId, List<gmaps.LatLng> path) {
+  void _onPolygonEdited(
+    PolygonId polygonId,
+    List<gmaps.LatLng> path,
+    List<List<gmaps.LatLng>> holes,
+  ) {
     final List<LatLng> points = path
         .map((gmaps.LatLng p) => LatLng(p.lat.toDouble(), p.lng.toDouble()))
         .toList();
-    _streamController.add(PolygonEditEvent(mapId, polygonId, points));
+    final List<List<LatLng>> convertedHoles = holes
+        .map(
+          (List<gmaps.LatLng> hole) => hole
+              .map(
+                (gmaps.LatLng p) => LatLng(p.lat.toDouble(), p.lng.toDouble()),
+              )
+              .toList(),
+        )
+        .toList();
+    _streamController.add(
+      PolygonEditEvent(mapId, polygonId, points, convertedHoles),
+    );
   }
 }

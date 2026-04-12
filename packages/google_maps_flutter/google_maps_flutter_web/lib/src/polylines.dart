@@ -55,11 +55,10 @@ class PolylinesController extends GeometryController {
   }
 
   void _changePolyline(Polyline polyline) {
-    final PolylineController? polylineController =
-        _polylineIdToController[polyline.polylineId];
-    polylineController?.update(
-      _polylineOptionsFromPolyline(googleMap, polyline),
-    );
+    // Remove and recreate the controller to ensure edit listeners are
+    // properly set up when the editable property changes.
+    _removePolyline(polyline.polylineId);
+    _addPolyline(polyline);
   }
 
   /// Removes a set of [PolylineId]s from the cache.
