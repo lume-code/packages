@@ -34,6 +34,8 @@ class Polygon implements MapsObject<Polygon> {
     this.visible = true,
     this.zIndex = 0,
     this.onTap,
+    this.editable = false,
+    this.onEdited,
   });
 
   /// Uniquely identifies a [Polygon].
@@ -93,6 +95,18 @@ class Polygon implements MapsObject<Polygon> {
   /// Callbacks to receive tap events for polygon placed on this map.
   final VoidCallback? onTap;
 
+  /// True if the user can edit this polygon by dragging its vertices.
+  ///
+  /// When true, the polygon renders with draggable vertex handles.
+  /// Not supported on all platforms.
+  final bool editable;
+
+  /// Called when the user edits the polygon path by dragging vertices.
+  ///
+  /// The callback receives the updated list of [LatLng] points.
+  /// Only fires when [editable] is true.
+  final void Function(List<LatLng> points)? onEdited;
+
   /// Creates a new [Polygon] object whose values are the same as this instance,
   /// unless overwritten by the specified parameters.
   Polygon copyWith({
@@ -106,6 +120,8 @@ class Polygon implements MapsObject<Polygon> {
     bool? visibleParam,
     int? zIndexParam,
     VoidCallback? onTapParam,
+    bool? editableParam,
+    void Function(List<LatLng> points)? onEditedParam,
   }) {
     return Polygon(
       polygonId: polygonId,
@@ -119,6 +135,8 @@ class Polygon implements MapsObject<Polygon> {
       visible: visibleParam ?? visible,
       onTap: onTapParam ?? onTap,
       zIndex: zIndexParam ?? zIndex,
+      editable: editableParam ?? editable,
+      onEdited: onEditedParam ?? onEdited,
     );
   }
 
@@ -147,6 +165,7 @@ class Polygon implements MapsObject<Polygon> {
     addIfPresent('strokeWidth', strokeWidth);
     addIfPresent('visible', visible);
     addIfPresent('zIndex', zIndex);
+    addIfPresent('editable', editable);
 
     json['points'] = _pointsToJson();
 
@@ -173,7 +192,8 @@ class Polygon implements MapsObject<Polygon> {
         visible == other.visible &&
         strokeColor == other.strokeColor &&
         strokeWidth == other.strokeWidth &&
-        zIndex == other.zIndex;
+        zIndex == other.zIndex &&
+        editable == other.editable;
   }
 
   @override

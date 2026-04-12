@@ -671,6 +671,14 @@ class _GoogleMapState extends State<GoogleMap> {
     }
   }
 
+  void onPolygonEdited(PolygonId polygonId, List<LatLng> points) {
+    final Polygon? polygon = _polygons[polygonId];
+    if (polygon == null) {
+      throw UnknownMapObjectIdError('polygon', polygonId, 'onEdited');
+    }
+    polygon.onEdited?.call(points);
+  }
+
   void onPolylineTap(PolylineId polylineId) {
     final Polyline? polyline = _polylines[polylineId];
     if (polyline == null) {
@@ -680,6 +688,14 @@ class _GoogleMapState extends State<GoogleMap> {
     if (onTap != null) {
       onTap();
     }
+  }
+
+  void onPolylineEdited(PolylineId polylineId, List<LatLng> points) {
+    final Polyline? polyline = _polylines[polylineId];
+    if (polyline == null) {
+      throw UnknownMapObjectIdError('polyline', polylineId, 'onEdited');
+    }
+    polyline.onEdited?.call(points);
   }
 
   void onCircleTap(CircleId circleId) {

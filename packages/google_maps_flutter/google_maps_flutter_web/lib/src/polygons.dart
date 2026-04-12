@@ -40,6 +40,11 @@ class PolygonsController extends GeometryController {
       onTap: () {
         _onPolygonTap(polygon.polygonId);
       },
+      onEdited: polygon.editable
+          ? (List<gmaps.LatLng> path) {
+              _onPolygonEdited(polygon.polygonId, path);
+            }
+          : null,
     );
     _polygonIdToController[polygon.polygonId] = controller;
   }
@@ -74,5 +79,12 @@ class PolygonsController extends GeometryController {
     // Comment here: https://github.com/flutter/flutter/issues/64084
     _streamController.add(PolygonTapEvent(mapId, polygonId));
     return _polygonIdToController[polygonId]?.consumeTapEvents ?? false;
+  }
+
+  void _onPolygonEdited(PolygonId polygonId, List<gmaps.LatLng> path) {
+    final List<LatLng> points = path
+        .map((gmaps.LatLng p) => LatLng(p.lat.toDouble(), p.lng.toDouble()))
+        .toList();
+    _streamController.add(PolygonEditEvent(mapId, polygonId, points));
   }
 }

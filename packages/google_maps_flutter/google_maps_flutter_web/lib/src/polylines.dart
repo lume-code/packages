@@ -40,6 +40,11 @@ class PolylinesController extends GeometryController {
       onTap: () {
         _onPolylineTap(polyline.polylineId);
       },
+      onEdited: polyline.editable
+          ? (List<gmaps.LatLng> path) {
+              _onPolylineEdited(polyline.polylineId, path);
+            }
+          : null,
     );
     _polylineIdToController[polyline.polylineId] = controller;
   }
@@ -77,5 +82,12 @@ class PolylinesController extends GeometryController {
     // Comment here: https://github.com/flutter/flutter/issues/64084
     _streamController.add(PolylineTapEvent(mapId, polylineId));
     return _polylineIdToController[polylineId]?.consumeTapEvents ?? false;
+  }
+
+  void _onPolylineEdited(PolylineId polylineId, List<gmaps.LatLng> path) {
+    final List<LatLng> points = path
+        .map((gmaps.LatLng p) => LatLng(p.lat.toDouble(), p.lng.toDouble()))
+        .toList();
+    _streamController.add(PolylineEditEvent(mapId, polylineId, points));
   }
 }

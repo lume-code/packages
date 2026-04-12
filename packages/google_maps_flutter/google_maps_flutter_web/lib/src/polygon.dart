@@ -11,12 +11,18 @@ class PolygonController {
     required gmaps.Polygon polygon,
     bool consumeTapEvents = false,
     VoidCallback? onTap,
+    void Function(List<gmaps.LatLng> path)? onEdited,
   }) : _polygon = polygon,
        _consumeTapEvents = consumeTapEvents {
     if (onTap != null) {
-      polygon.onClick.listen((gmaps.PolyMouseEvent event) {
-        onTap.call();
-      });
+      _subscriptions.add(
+        polygon.onClick.listen((gmaps.PolyMouseEvent event) {
+          onTap.call();
+        }),
+      );
+    }
+    if (onEdited != null) {
+      _listenToPathEdits(polygon, onEdited);
     }
   }
 
@@ -24,12 +30,39 @@ class PolygonController {
 
   final bool _consumeTapEvents;
 
+  final List<StreamSubscription<dynamic>> _subscriptions =
+      <StreamSubscription<dynamic>>[];
+
   /// Returns the wrapped [gmaps.Polygon]. Only used for testing.
   @visibleForTesting
   gmaps.Polygon? get polygon => _polygon;
 
   /// Returns `true` if this Controller will use its own `onTap` handler to consume events.
   bool get consumeTapEvents => _consumeTapEvents;
+
+  List<gmaps.LatLng> _readPath(gmaps.Polygon polygon) {
+    final gmaps.MVCArray<gmaps.LatLng> path = polygon.path;
+    final points = <gmaps.LatLng>[];
+    for (int i = 0; i < path.length.toInt(); i++) {
+      points.add(path.getAt(i));
+    }
+    return points;
+  }
+
+  void _listenToPathEdits(
+    gmaps.Polygon polygon,
+    void Function(List<gmaps.LatLng> path) onEdited,
+  ) {
+    void emitCurrentPath() {
+      onEdited(_readPath(polygon));
+    }
+
+    _subscriptions.add(polygon.path.onSetAt.listen((_) => emitCurrentPath()));
+    _subscriptions
+        .add(polygon.path.onInsertAt.listen((_) => emitCurrentPath()));
+    _subscriptions
+        .add(polygon.path.onRemoveAt.listen((_) => emitCurrentPath()));
+  }
 
   /// Updates the options of the wrapped [gmaps.Polygon] object.
   ///
@@ -45,6 +78,10 @@ class PolygonController {
       _polygon!.visible = false;
       _polygon!.map = null;
       _polygon = null;
+      for (final StreamSubscription<dynamic> sub in _subscriptions) {
+        sub.cancel();
+      }
+      _subscriptions.clear();
     }
   }
 }
